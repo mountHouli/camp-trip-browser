@@ -1,0 +1,26 @@
+{
+  "name": "camp-trip-browser",
+  "description": "For booking trips.",
+  "author": "Aaron Houlihan",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mountHouli/camp-trip-browser"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
+  },
+  "dependencies": {
+    "html-webpack-plugin": "^2.30.1"
+  }
+}

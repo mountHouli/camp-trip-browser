@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import SomeComponent from './components/Components/SomeComponent'
+import SomeComponent from './components/components/SomeComponent'
 
 ReactDOM.render(
   <SomeComponent/>,

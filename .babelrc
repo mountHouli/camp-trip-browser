@@ -1,0 +1,4 @@
+{
+  "plugins": ["transform-object-rest-spread"], // IE and Safari haven't implemented this yet (December 2017).
+  "presets": ["react"]
+}

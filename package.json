@@ -9,8 +9,8 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack-dev-server",
+    "build": "webpack --config webpack.config.browserBundle.js",
+    "start": "webpack-dev-server --config webpack.config.browserBundle.js",
     "lint": "eslint \"src/**\"; exit 0;"
   },
   "devDependencies": {

@@ -1,4 +1,7 @@
 {
-  "plugins": ["transform-object-rest-spread"], // IE and Safari haven't implemented this yet (December 2017).
+  "plugins": [
+    "transform-object-rest-spread", // IE and Safari haven't implemented Object Rest and Spread yet (as of December 2017).
+    "react-hot-loader/babel"
+  ],
   "presets": ["react"]
 }

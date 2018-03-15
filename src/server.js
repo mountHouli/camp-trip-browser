@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'dev') {
   const webpackHotMiddleware = require('webpack-hot-middleware')
   const webpackHotServerMiddleware = require('webpack-hot-server-middleware')
 
-  const webpackConfig = require('../webpack.config.browserBundle.js') // !! fix relative path
+  const webpackConfig = require('../webpack.config.js') // !! fix relative path
 
   const compiler = webpack(webpackConfig)
 

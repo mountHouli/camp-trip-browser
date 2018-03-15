@@ -57,7 +57,7 @@ module.exports = [
     target: 'web',
     entry: clientConfig.entry[NODE_ENV],
     output: {
-      filename: 'browserBundle.js',
+      filename: 'clientBundle.js',
       path: path.join(__dirname, 'dist', 'public'),
       publicPath: '/'
     },

@@ -6,7 +6,7 @@ module.exports = (reactRootContent) => {
 </head>
 <body>
   <div id="react_root">${reactRootContent}</div>
-  <script src="/browserBundle.js"></script>
+  <script src="/clientBundle.js"></script>
 </body>`
   return html
 }

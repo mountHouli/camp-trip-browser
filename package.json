@@ -9,7 +9,7 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
-    "clean": "rm dist/config.js dist/server.js dist/ssrIndexHtmlGenerator.js dist/ssrBundle.js dist/public/browserBundle.js",
+    "clean": "rm dist/config.js dist/server.js dist/ssrIndexHtmlGenerator.js dist/ssrBundle.js dist/public/clientBundle.js",
     "build": "NODE_ENV=prod webpack",
     "prod-localtest-start": "NODE_ENV=prod node dist/server.js",
     "prod-localtest-clean-build-start": "npm run clean; npm run build; npm run prod-localtest-start",

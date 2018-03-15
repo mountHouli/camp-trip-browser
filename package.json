@@ -11,7 +11,7 @@
   "scripts": {
     "prod-build": "webpack --config webpack.config.browserBundle.js; webpack --config webpack.config.ssrBundle.js",
     "prod-start": "node dist/server.js",
-    "prod-build-start": "npm run build-prod; npm run start-prod;",
+    "prod-build-start": "npm run prod-build; npm run prod-start;",
     "lint": "eslint \"src/**\"; exit 0;"
   },
   "devDependencies": {

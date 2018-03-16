@@ -11,12 +11,12 @@ const { NODE_ENV } = process.env
 const deploymentLevelSpecificConfigs = {
   clientConfig: {
     entry: {
-      prod: path.join(__dirname, 'src', 'browserIndex.js'),
+      prod: path.join(__dirname, 'src', 'clientIndex.js'),
       dev: [
         // We only want to use this for the client bundle, because HMR for the server bundle
         // is handled not by webpack-hot-middleware but by webpack-hot-server-middleware
         'webpack-hot-middleware/client',
-        path.join(__dirname, 'src', 'browserIndex.js')
+        path.join(__dirname, 'src', 'clientIndex.js')
       ]
     },
     devtool: {
@@ -46,7 +46,6 @@ const deploymentLevelSpecificConfigs = {
 
 const { clientConfig, serverConfig } = deploymentLevelSpecificConfigs
 
-// !! change name of everything "browser" to "client"
 // In order to work with webpack-hot-server-middleware, module.exports must =
 // array with two members
 //  - one with name: 'client' for the bundle that gets sent to the browser
@@ -91,7 +90,7 @@ module.exports = [
       filename: 'ssrBundle.js',
       path: path.join(__dirname, 'dist'),
       // This makes it so ssrIndex.js's default export, which is a function, can be required and used.
-      // Note:  When using the "commonjs2" option, a webpack "library:" member is irrelevant.
+      // Note:  When using the "commonjs2" option, the webpack "output.library:" member is irrelevant.
       libraryTarget: "commonjs2"
     },
     devtool: serverConfig.devtool[NODE_ENV],

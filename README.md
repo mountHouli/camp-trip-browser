@@ -1,4 +1,4 @@
-# camp-trip-browser
+# camp-trip-client
 
 For booking trips.
 

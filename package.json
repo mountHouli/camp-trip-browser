@@ -1,11 +1,11 @@
 {
-  "name": "camp-trip-browser",
+  "name": "camp-trip-client",
   "description": "For booking trips.",
   "author": "Aaron Houlihan",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mountHouli/camp-trip-browser"
+    "url": "https://github.com/mountHouli/camp-trip-client"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {

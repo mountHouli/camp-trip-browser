@@ -1,1 +1,1 @@
-This repository, camp-trip-browser, and all of its contents are the property of Aaron Houlihan and may not be reproduced, copied, modified, or used without expressed written consent.  All rights reserved.
+This repository, camp-trip-client, and all of its contents are the property of Aaron Houlihan and may not be reproduced, copied, modified, or used without expressed written consent.  All rights reserved.

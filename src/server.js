@@ -1,4 +1,7 @@
-// !! require() paths are relative to where things sit in the dist directory
+// NOTE:
+// When NODE_ENV=prod, this file will be running in the dist/ dir, and all paths are relative from there
+// When NODE_ENV=src,  this file will be running in the src/ dir, and all paths are relative from there
+// The same paths work in both places because the path relativity is the same whether in src/ or dist/
 const path = require('path')
 
 const express = require('express')
@@ -14,7 +17,7 @@ if (process.env.NODE_ENV === 'dev') {
   const webpackHotMiddleware = require('webpack-hot-middleware')
   const webpackHotServerMiddleware = require('webpack-hot-server-middleware')
 
-  const webpackConfig = require('../webpack.config.js') // !! fix relative path
+  const webpackConfig = require('../webpack.config.js')
 
   const compiler = webpack(webpackConfig)
 
@@ -28,9 +31,9 @@ if (process.env.NODE_ENV === 'dev') {
   app.use(webpackHotServerMiddleware(compiler))
 }
 else if (process.env.NODE_ENV === 'prod') {
-  const ssrMiddleware = require('./ssrBundle.js').default // !! make sure this path is what you want
+  const ssrMiddleware = require('./ssrBundle.js').default
 
-  app.use(express.static(path.resolve(__dirname, 'public'))) // !! fix this path for dev !!
+  app.use(express.static(path.resolve(__dirname, 'public')))
 
   app.use(ssrMiddleware())
 }

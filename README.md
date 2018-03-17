@@ -18,7 +18,6 @@ See:
 
 ## To-Do
 
-- In server.js, require() paths are relative to where things sit in the dist directory, so make them work for env=dev as well
 - Build system
   - Setup dev envr
     - watch original sources, not dist/ files
@@ -36,6 +35,7 @@ See:
 
 ### Done
 
+- In server.js, require() paths are relative to where things sit in the dist directory, so make them work for env=dev as well
 - Build system
   - eslint
     - make it run on files in the root dir

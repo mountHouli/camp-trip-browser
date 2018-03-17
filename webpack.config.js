@@ -1,9 +1,8 @@
 const path = require('path')
 
 const webpack = require('webpack')
-const webpackNodeExternals = require('webpack-node-externals');
+const webpackNodeExternals = require('webpack-node-externals')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-
 const { removeEmpty } = require('webpack-config-utils')
 
 const { NODE_ENV } = process.env
@@ -91,7 +90,7 @@ module.exports = [
       path: path.join(__dirname, 'dist'),
       // This makes it so ssrIndex.js's default export, which is a function, can be required and used.
       // Note:  When using the "commonjs2" option, the webpack "output.library:" member is irrelevant.
-      libraryTarget: "commonjs2"
+      libraryTarget: 'commonjs2'
     },
     devtool: serverConfig.devtool[NODE_ENV],
     module: {
@@ -112,8 +111,6 @@ module.exports = [
     plugins: [
       new CopyWebpackPlugin([
         // The "to:" paths are relative to the "output.path:" directory
-        // Therefore, Need to go up a dir (../) because "output.path:"
-        // specifies path of dist/public/ and we want these files in dist/
         {from: 'src/server.js', to: './server.js'},
         {from: 'src/ssrIndexHtmlGenerator.js', to: './ssrIndexHtmlGenerator.js'},
         {from: 'src/config.js', to: './config.js'}

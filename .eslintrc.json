@@ -1,15 +1,15 @@
 {
-    "extends": [
-      "standard",
-      "eslint:recommended",
-      "plugin:react/recommended"
-    ],
-    "settings": {
-      "react": {
-        "version": "16.2"
-      }
-    },
-    "rules": {
-      "no-console": ["error", { "allow": ["warn", "error"] }]
+  "extends": [
+    "standard",
+    "plugin:react/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "16.2"
     }
+  },
+  "rules": {
+    "brace-style": ["error", "stroustrup"],
+    "no-console": ["warn", { "allow": ["warn", "error"] }]
+  }
 }

@@ -14,7 +14,7 @@
     "prod-localtest-start": "NODE_ENV=prod node dist/server.js",
     "prod-localtest-clean-build-start": "npm run clean; npm run build; npm run prod-localtest-start",
     "dev-start": "node -r dotenv/config src/server.js",
-    "lint": "eslint \"src/**\"; exit 0;"
+    "lint": "eslint \"./**\"; exit 0;"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

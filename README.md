@@ -25,13 +25,15 @@ See:
   - Minify
   - clean dist/ dir
   - Could use code splitting to make clientBundle.js and ssrBundle.js share most of the same code.  Not necessar, however, because code splitting is usually for performance reasons.
-  - npm uninstall webpack-dev-server
+  - move common webpack config (such as copying and cleaning files) from server to client config.
+
 
 ### Low Priority
 
 - Build system
   - eslint
     - .eslintrc.json React recommended settings (see https://github.com/yannickcr/eslint-plugin-react)
+  - Enable dist/ dir cleaning without webpack building.
 
 ### Done
 
@@ -45,6 +47,8 @@ See:
     - Setup SSR for prod env
     - delete client/server/shared folder structure
     - Make webpack config support both prod and dev
+  - npm uninstall webpack-dev-server
+  - make dist/ dir cleaning maintainable (not requiring explicity specify every file in it)
 
 ## Environment and Build System Works Like This...
 

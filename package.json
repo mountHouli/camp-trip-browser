@@ -9,10 +9,9 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
-    "clean": "rm dist/config.js dist/server.js dist/ssrIndexHtmlGenerator.js dist/ssrBundle.js dist/public/clientBundle.js",
     "build": "NODE_ENV=prod webpack",
     "prod-localtest-start": "NODE_ENV=prod node dist/server.js",
-    "prod-localtest-clean-build-start": "npm run clean; npm run build; npm run prod-localtest-start",
+    "prod-localtest-build-start": "npm run build; npm run prod-localtest-start",
     "dev-start": "node -r dotenv/config src/server.js",
     "lint": "eslint \"./**\"; exit 0;"
   },
@@ -21,6 +20,7 @@
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.1",
     "dotenv": "^5.0.1",
     "eslint": "^4.18.2",

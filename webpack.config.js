@@ -2,6 +2,7 @@ const path = require('path')
 
 const webpack = require('webpack')
 const webpackNodeExternals = require('webpack-node-externals')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const { removeEmpty } = require('webpack-config-utils')
 
@@ -109,6 +110,18 @@ module.exports = [
       extensions: ['.js', '.json', '.jsx']
     },
     plugins: [
+      new CleanWebpackPlugin(
+        [
+          'dist/*.*',
+          'dist/public/*.*'
+        ],
+        {
+          root: __dirname,
+          exclude: '.gitkeep',
+          verbose: true
+          // set watch: true ??
+        }
+      ),
       new CopyWebpackPlugin([
         // The "to:" paths are relative to the "output.path:" directory
         {from: 'src/server.js', to: './server.js'},

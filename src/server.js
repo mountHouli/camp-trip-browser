@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'dev') {
   // This does what app.use(ssrMiddleware()) does in production.
   app.use(webpackHotServerMiddleware(compiler))
 }
-else if (process.env.NODE_ENV = 'prod') {
+else if (process.env.NODE_ENV === 'prod') {
   const ssrMiddleware = require('./ssrBundle.js').default // !! make sure this path is what you want
 
   app.use(express.static(path.resolve(__dirname, 'public'))) // !! fix this path for dev !!

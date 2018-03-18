@@ -1,4 +1,5 @@
 # Sometimes I mv/rename node_modules_with_something_else while developing, so put a * at the end of node_modules
+.vscode
 node_modules*
 dist
 dev

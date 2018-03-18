@@ -12,7 +12,7 @@
     "build": "NODE_ENV=prod webpack",
     "prod-localtest-start": "NODE_ENV=prod node dist/server.js",
     "prod-localtest-build-start": "npm run build; npm run prod-localtest-start",
-    "dev-start": "node -r dotenv/config src/server.js",
+    "dev": "node -r dotenv/config src/server.js",
     "lint": "eslint \"./**\"; exit 0;"
   },
   "devDependencies": {

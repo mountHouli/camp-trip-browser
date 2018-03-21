@@ -18,20 +18,22 @@ if (process.env.NODE_ENV === 'dev') {
   const webpackHotServerMiddleware = require('webpack-hot-server-middleware')
 
   const webpackConfig = require('../webpack.config.js')
+  const clientWebpackConfig = webpackConfig.find(config => config.name === 'client')
 
   const compiler = webpack(webpackConfig)
+  const clientBundleCompiler = compiler.compilers.find(compiler => compiler.name === 'client')
 
   app.use(webpackDevMiddleware(compiler, {
-    publicPath: webpackConfig.find(compiler => compiler.name === 'client').output.publicPath,
+    publicPath: clientWebpackConfig.output.publicPath,
     serverSideRender: true
   }))
-  app.use(webpackHotMiddleware(compiler.compilers.find(compiler => compiler.name === 'client')))
+  app.use(webpackHotMiddleware(clientBundleCompiler))
   // ?? do I need to app.use(express.static) here ??
   // This does what app.use(ssrMiddleware()) does in production.
-  app.use(webpackHotServerMiddleware(compiler))
+  app.use(webpackHotServerMiddleware(compiler, { chunkName: 'ssrIndex' }))
 }
 else if (process.env.NODE_ENV === 'prod') {
-  const ssrMiddleware = require('./ssrBundle.js').default
+  const ssrMiddleware = require('./ssrIndex.bundle.js').default
 
   app.use(express.static(path.resolve(__dirname, 'public')))
 

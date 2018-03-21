@@ -11,13 +11,17 @@ const { NODE_ENV } = process.env
 const deploymentLevelSpecificConfigs = {
   client: {
     entry: {
-      prod: path.join(__dirname, 'src', 'clientIndex.js'),
-      dev: [
+      prod: {
+        clientIndex: path.join(__dirname, 'src', 'clientIndex.js')
+      },
+      dev: {
+        clientIndex: [
         // We only want to use this for the client bundle, because HMR for the server bundle
         // is handled not by webpack-hot-middleware but by webpack-hot-server-middleware
         'webpack-hot-middleware/client',
         path.join(__dirname, 'src', 'clientIndex.js')
       ]
+      }
     },
     devtool: {
       prod: undefined,
@@ -55,7 +59,7 @@ const clientConfig = removeEmpty({
   target: 'web',
   entry: client.entry[NODE_ENV],
   output: {
-    filename: 'clientBundle.js',
+    filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist', 'public'),
     publicPath: '/'
   },
@@ -85,9 +89,11 @@ ssrConfig = removeEmpty({
   // Causes webpack to not add to the bundle any packages in node_modules such as express.
   // We want this because this file is for server side code, so we don't need to bundle these things.
   externals: [webpackNodeExternals()],
-  entry: path.join(__dirname, 'src', 'ssrIndex.js'),
+  entry: {
+    ssrIndex: path.join(__dirname, 'src', 'ssrIndex.js')
+  },
   output: {
-    filename: 'ssrBundle.js',
+    filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
     // This makes it so ssrIndex.js's default export, which is a function, can be required and used.
     // Note:  When using the "commonjs2" option, the webpack "output.library:" member is irrelevant.

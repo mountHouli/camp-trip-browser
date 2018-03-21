@@ -5,8 +5,8 @@ import { fetchTrips } from './actions'
 import rootReducer from './reducers'
 
 // We must not directly export the store as a module, because if we do it becomes a singleton,
-// so it will get created once when the server starts and all requests (ALL USERS!!!) will share it,
-// which is a no-can-do because of SSR.
+// which would cause it to get created once when the server starts and all requests (ALL USERS!!!)
+// will share it, which is a no-can-do because of SSR.
 export default async (initialState) => {
   const store = createStore(
     rootReducer,

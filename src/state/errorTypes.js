@@ -1,0 +1,1 @@
+export const GET_TRIPS_ERROR = 'GET_TRIPS_ERROR'

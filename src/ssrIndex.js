@@ -4,19 +4,25 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { StaticRouter } from 'react-router'
+import { Provider } from 'react-redux'
 
 import App from './components/App'
-
 import ssrIndexHtmlGenerator from './ssrIndexHtmlGenerator'
+import createStore from './state/store.js'
 
+// Why am I returning an express middleware rather than just directly  exporting it ??
 export default () => {
-  return (req, res) => {
+  return async (req, res) => {
     const context = {}
 
+    const store = await createStore()
+
     const reactHtml = ReactDOMServer.renderToString(
-      <StaticRouter location={req.url} context={context}>
-        <App />
-      </StaticRouter>
+      <Provider store={store}>
+        <StaticRouter location={req.url} context={context}>
+          <App />
+        </StaticRouter>
+      </Provider>
     )
 
     const indexHtml = ssrIndexHtmlGenerator(reactHtml)

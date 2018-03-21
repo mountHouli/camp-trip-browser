@@ -3,7 +3,8 @@ import { Route, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { hot } from 'react-hot-loader'
 
-import Home from './Home'
+// import Home from './Home' // !! fix this
+import TripList from './TripList'
 import Trip from './Trip'
 
 class App extends React.Component {
@@ -12,7 +13,7 @@ class App extends React.Component {
       <div>
         <div>This is the app page, and here are some links:</div>
         <div><Link to={'/trip/1'}>Trip 1</Link></div>
-        <Route path='/' exact component={Home} />
+        <Route path='/' exact component={TripList} />
         <Route path='/trip' component={Trip} />
       </div>
     )

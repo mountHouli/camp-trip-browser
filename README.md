@@ -20,8 +20,9 @@ See:
 
 - Build system
   - Setup dev envr
-    - watch original sources, not dist/ files
-    - debug original sources, not dist/ files
+    - debug
+      - output.devtoolModuleFilenameTemplate: '[absolute-resource-path]'
+      - add a entry.context: param so that webpack isn't dependent on cwd
   - Minify
   - Could use code splitting to make clientBundle.js and ssrBundle.js share most of the same code.  Not necessar, however, because code splitting is usually for performance reasons.
   - move common webpack config (such as copying and cleaning files) from server to client config.

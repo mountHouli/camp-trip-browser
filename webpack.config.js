@@ -78,7 +78,26 @@ const clientConfig = removeEmpty({
     // so you can import a .jsx file without specifying the extension
     extensions: ['.js', '.json', '.jsx']
   },
-  plugins: client.plugins[NODE_ENV]
+  plugins: removeEmpty([
+    new CleanWebpackPlugin(
+      [
+        'dist/*.*',
+        'dist/public/*.*'
+      ],
+      {
+        root: __dirname,
+        exclude: '.gitkeep',
+        verbose: true
+        // set watch: true ??
+      }
+    ),
+    new CopyWebpackPlugin([
+      // The "to:" paths are relative to the "output.path:" directory
+      {from: 'src/server.js', to: '../server.js'},
+      {from: 'src/ssrIndexHtmlGenerator.js', to: '../ssrIndexHtmlGenerator.js'},
+      {from: 'src/config.js', to: '../config.js'}
+    ]),
+  ].concat(client.plugins[NODE_ENV]))
 })
 
 ssrConfig = removeEmpty({
@@ -115,26 +134,6 @@ ssrConfig = removeEmpty({
     // so you can import a .jsx file without specifying the extension
     extensions: ['.js', '.json', '.jsx']
   },
-  plugins: [
-    new CleanWebpackPlugin(
-      [
-        'dist/*.*',
-        'dist/public/*.*'
-      ],
-      {
-        root: __dirname,
-        exclude: '.gitkeep',
-        verbose: true
-        // set watch: true ??
-      }
-    ),
-    new CopyWebpackPlugin([
-      // The "to:" paths are relative to the "output.path:" directory
-      {from: 'src/server.js', to: './server.js'},
-      {from: 'src/ssrIndexHtmlGenerator.js', to: './ssrIndexHtmlGenerator.js'},
-      {from: 'src/config.js', to: './config.js'}
-    ])
-  ]
 })
 
 module.exports = [ clientConfig, ssrConfig ]

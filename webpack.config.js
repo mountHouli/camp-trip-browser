@@ -94,7 +94,6 @@ const clientConfig = removeEmpty({
     new CopyWebpackPlugin([
       // The "to:" paths are relative to the "output.path:" directory
       {from: 'src/server.js', to: '../server.js'},
-      {from: 'src/ssrIndexHtmlGenerator.js', to: '../ssrIndexHtmlGenerator.js'},
       {from: 'src/config.js', to: '../config.js'}
     ]),
   ].concat(client.plugins[NODE_ENV]))

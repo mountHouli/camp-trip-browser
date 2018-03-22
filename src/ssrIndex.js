@@ -1,33 +1,22 @@
-// Note:  Non-react HTML template string generation and any SSR code that has to be webpack compiled (e.g. react components)
-// must both be handled by the middleware defined in this file because webpack-dev-server-middleware must be able
-// to app.use this whole thing so it can completely handle and respond to requests made to the dev server.
-import React from 'react'
+// Note:  The entire SSR HTML generation must be handled by the middleware defined in this file
+// because webpack-dev-server-middleware must be able to app.use this whole thing so it can
+// completely handle and respond to requests made to the dev server.
 import ReactDOMServer from 'react-dom/server'
-import { StaticRouter } from 'react-router'
-import { Provider } from 'react-redux'
 
-import App from './components/App'
-import ssrIndexHtmlGenerator from './ssrIndexHtmlGenerator'
+import Html from './html.jsx'
 import createStore from './state/store.js'
 
-// Why am I returning an express middleware rather than just directly  exporting it ??
-export default () => {
+export default function ssrIndexMiddlewareCreator () {
   return async (req, res) => {
     const context = {}
 
     const store = await createStore()
 
-    const reactHtml = ReactDOMServer.renderToString(
-      <Provider store={store}>
-        <StaticRouter location={req.url} context={context}>
-          <App />
-        </StaticRouter>
-      </Provider>
+    const indexHtml = ReactDOMServer.renderToString(
+      Html(req.url, store, context)
     )
 
-    const indexHtml = ssrIndexHtmlGenerator(reactHtml)
-
-    // The when react renders, StaticRouter (in reactHtmlGenerator.js) will modify the context object.
+    // The when react renders, StaticRouter (in Html.jsx) will modify the context object.
     // If the requested location is a react router redirect, the router will add a
     // url member to context that is the location to redirect to
     if (context.url) {

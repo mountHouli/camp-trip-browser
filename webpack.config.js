@@ -4,6 +4,7 @@ const webpack = require('webpack')
 const webpackNodeExternals = require('webpack-node-externals')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { removeEmpty } = require('webpack-config-utils')
 
 const { NODE_ENV } = process.env
@@ -16,11 +17,11 @@ const deploymentLevelSpecificConfigs = {
       },
       dev: {
         clientIndex: [
-        // We only want to use this for the client bundle, because HMR for the server bundle
-        // is handled not by webpack-hot-middleware but by webpack-hot-server-middleware
-        'webpack-hot-middleware/client',
-        path.join(__dirname, 'src', 'clientIndex.js')
-      ]
+          // We only want to use this for the client bundle, because HMR for the server bundle
+          // is handled not by webpack-hot-middleware but by webpack-hot-server-middleware
+          'webpack-hot-middleware/client',
+          path.join(__dirname, 'src', 'clientIndex.js')
+        ]
       }
     },
     devtool: {
@@ -96,6 +97,14 @@ const clientConfig = removeEmpty({
       {from: 'src/server.js', to: '../server.js'},
       {from: 'src/config.js', to: '../config.js'}
     ]),
+    // THIS IS NOT USED BY THE APP WHATSOEVER.  I am only using it to generate index.html
+    // to see what webpack is automatically doing, so that I can manually replicate
+    // it in my <HTML/> react component (I have to do this for SSR).
+    new HtmlWebpackPlugin({
+      template: 'src/index.html.template',
+      // The "filename:" path is relative to "output.path:"
+      filename: '../../junk/index.html'
+    })
   ].concat(client.plugins[NODE_ENV]))
 })
 

@@ -20,18 +20,26 @@ See:
 
 - Build system
   - Setup dev envr
+    - Errors hidden until dev server killed.  Ex:  `ReferenceError: WHATEVER_COMPONENT_I_USED_BUT_FORGOT_TO_IMPORT is not defined`
+    - Clean up env var setting, especially NODE_ENV
+      - maybe use webpack "mode" option
+      - https://webpack.js.org/configuration/configuration-types/
     - debug
-      - output.devtoolModuleFilenameTemplate: '[absolute-resource-path]'
+      - `output.devtoolModuleFilenameTemplate: '[absolute-resource-path]'`
       - add a entry.context: param so that webpack isn't dependent on cwd
   - Minify
-  - Could use code splitting to make clientIndex.bundle.js and ssrIndex.bundle.js share most of the same code.  Not necessar, however, because code splitting is usually for performance reasons.
+  - Could use code splitting to make `clientIndex.bundle.js` and `ssrIndex.bundle.js` share most of the same code.  Not necessar, however, because code splitting is usually for performance reasons.
   - move common webpack config (such as copying and cleaning files) from server to client config.
+  - Consider using `import { syncHistoryWithStore } from 'react-router-redux';`
+  - Performance
+    - use renderToNodeStream() from react-dom/server instead of renderToString()
+  - Production build makes a request to `/__webpack_hmr`
 
 ### Low Priority
 
 - Build system
   - eslint
-    - .eslintrc.json React recommended settings (see https://github.com/yannickcr/eslint-plugin-react)
+    - `.eslintrc.json` React recommended settings (see https://github.com/yannickcr/eslint-plugin-react)
   - Enable dist/ dir cleaning without webpack building.
 
 ### Done
@@ -101,3 +109,14 @@ module.exports = {
 }
 
 ```
+
+### Code Splitting
+
+I want to do code splitting.  To manage this MUCH easier, I need to use HtmlWebpackPlugin (so that every time I change a code split, I don't have to manually change my index.html file, and it will also almost certainly handle injecting the bundle hash part of the name into the index.html file, which, if I was doing manually, would have to be done EVERY TIME I BUILD).
+
+However, I'm doing SSR, and in SSR, an express middleware handles EVERYTHING (generating the non-ract html from a simple string template, and putting the react html into it, and sending it to the browser).
+
+So, how do I use HtmlWebpackPlugin WITH ssr??
+
+The specific problem is, the express middleware that generates ALL the html, without HtmlWebpackPlugin, can operate on a (non-react) html generating function in my src/ directory, but with HtmlWebpackPlugin, I need it to be able to grab the generated-by-webpack index.html (with all of the scripts and stuff webpack has injected into it), and insert into that file (or the string content of that file), the react html, which I can then send off to the client.
+

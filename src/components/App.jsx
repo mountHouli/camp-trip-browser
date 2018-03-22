@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Link } from 'react-router-dom'
+import { Route, Redirect, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { hot } from 'react-hot-loader'
 
@@ -15,6 +15,7 @@ class App extends React.Component {
         <div><Link to={'/trip/1'}>Trip 1</Link></div>
         <Route path='/' exact component={TripList} />
         <Route path='/trip' component={Trip} />
+        <Route exact path='/nothing' render={() => (<Redirect to='/trip/1'/>)}/>
       </div>
     )
   }

@@ -31,7 +31,7 @@ export default () => {
     // If the requested location is a react router redirect, the router will add a
     // url member to context that is the location to redirect to
     if (context.url) {
-      res.status(301).append({ Location: context.url }).send()
+      res.redirect(301, context.url)
     }
     else {
       res.header('Content-Type', 'text/html; charset=UTF-8')

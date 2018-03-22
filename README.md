@@ -20,6 +20,7 @@ See:
 
 - Build system
   - Setup dev envr
+    - switch NODE_ENV from "prod" and "dev" to "production" and "development" because this is what webpack uses.
     - Errors hidden until dev server killed.  Ex:  `ReferenceError: WHATEVER_COMPONENT_I_USED_BUT_FORGOT_TO_IMPORT is not defined`
     - Clean up env var setting, especially NODE_ENV
       - maybe use webpack "mode" option
@@ -32,7 +33,7 @@ See:
   - move common webpack config (such as copying and cleaning files) from server to client config.
   - Consider using `import { syncHistoryWithStore } from 'react-router-redux';`
   - Performance
-    - use renderToNodeStream() from react-dom/server instead of renderToString()
+    - use renderToNodeStream() from react-dom/server instead of renderToString() (see https://blogs.msmvps.com/theproblemsolver/2017/11/26/react-server-side-rendering-with-webpack/)
   - Production build makes a request to `/__webpack_hmr`
   - Fix <script src="/whatever" /> relative path to handle both http and https (if it doesn't already--I dont know)
 

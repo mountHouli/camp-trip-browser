@@ -34,6 +34,7 @@ See:
   - Performance
     - use renderToNodeStream() from react-dom/server instead of renderToString()
   - Production build makes a request to `/__webpack_hmr`
+  - Fix <script src="/whatever" /> relative path to handle both http and https (if it doesn't already--I dont know)
 
 ### Low Priority
 
@@ -110,6 +111,127 @@ module.exports = {
 
 ```
 
+### SSR With Webpack
+
+#### Originally...
+
+Originally, this project had a simple webpack config, with simple output (just one bundle, not multiple assets), so I could manually generate (using a JS template string) the index HTML, and just insert the react generated markup into it.  As follows:
+
+```
+// Server-side code handled / returned by express middleware I setup to do SSR...
+
+const App = () => {
+  return (
+    <div>This is the top level div of App
+      <div>This is more stuff</div>
+    </div>
+  )
+}
+
+const htmlTemplateGenerator = (reactHtml) => {
+  const html = 
+    `<head>
+    </head>
+    <body>
+      <div id="react_app_root">${reactHtml}</div>
+      <script src="/public/path/to/clientIndex.bundle.js"></script>
+    </body>
+    `
+}
+
+const reactHtml = ReactDOMServer.renderToString(
+  <Provider store={store}>
+    <StaticRouter location={req.url} context={context}>
+      <App />
+    </StaticRouter>
+  </Provider>
+)
+
+res.send(htmlTemplateGenerator(reactHtml))
+
+// And clientIndex.js (which turns into clientIndex.bundle.js) had this...
+ReactDOM.hydrate(
+  <Provider store={store}>
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
+  </Provider>,
+  document.getElementById('react_root')
+)
+```
+
+Above, `ReactDOMServer.renderToString()` sees that `<App/>` is the root component and inserts `data-reactroot` here:
+
+```
+// ... stuff ...
+<body>
+  <div id="react_app_root" data-reactroot="">
+    <div>This is the top level div of App
+      <div>This is more stuff</div>
+// ... stuff ...
+```
+
+which lines up perfectly with `clientIndex.bundle.js`'s call to `ReactDOM.hydrate()`.
+
+#### The problem...
+
+This project is going to start having a more complicated webpack output--specifically, it will have multiple webpack bundles / assets, with various auto-generated names.
+
+`html-webpack-plugin` nicely handles putting the urls to all these auto-generated assets into an index.html file.  Since I'm doing SSR, I can't do that.  Therefore, I have to manually generate the HTML.  Since the HTML is going to be very complicated, I'm going to use React to generate it, rather than just a normal javascript template string as above.  This could be a problem for hot reloading in the future because...
+
+(Note:  I have it working now, but the entire reason I'm making this note is in case there are problems later)
+
+`react-hot-loader`, when using the following version of its API (which is easier to use and is recommended)...
+
+```
+import { hot } from 'react-hot-loader'
+const App = () => (<div>'Hello World!'</div>)
+export default hot(module)(App)
+```
+
+...needs the "hot exported" component (`<App/>` in this case), to be the top level component.  However, the way I have set things up now...
+
+```
+// Html.jsx
+import App from './components/App'
+
+const Html = (url, context, store, ) => {
+  // Just to be clear, this is all JSX, not HTML.
+  return (
+    <html>
+      <head>
+      </head>
+      <body>
+        <Provider store={store}>
+          <StaticRouter location={url} context={context}>
+            <App />
+          </StaticRouter>
+        </Provider>
+        <!-- Ignore the fact that the script and its src are static here.  It's beside the point.  I know I need to fix it -->
+        <script src="./clientIndex.bundle.js">
+      </body>
+    </html>
+  )
+}
+
+// In the express middleware that handles all requests and does SSR...
+res.send(ReactDOMServer.renderToString(Html(req.url, theContext, theStore)))
+
+// Note: clientIndex.bundle.js remains the same as it is above--treating <App/> as the react root.
+```
+
+... `ReactDOMServer.renderToString()` outputs `data-reactroot` in the `<html>` tag (rather than in the top-level `<div/>` of `<App/>`) like this...
+
+```
+<html data-reactroot="">
+  <head>
+// ... the rest of the stuff ...
+```
+
+This is how I do things now, and again, this note is just in case it causes problems in the future.
+
+Note:  Like this, hot reloading in the browser only works an `<App/>` and its children, of course (not on `<Html/>`).  I haven't checked hot reloading of the ssrIndex.bundle.js, but it's almost certainly the same case.
+
 ### Code Splitting
 
 I want to do code splitting.  To manage this MUCH easier, I need to use HtmlWebpackPlugin (so that every time I change a code split, I don't have to manually change my index.html file, and it will also almost certainly handle injecting the bundle hash part of the name into the index.html file, which, if I was doing manually, would have to be done EVERY TIME I BUILD).
@@ -119,4 +241,3 @@ However, I'm doing SSR, and in SSR, an express middleware handles EVERYTHING (ge
 So, how do I use HtmlWebpackPlugin WITH ssr??
 
 The specific problem is, the express middleware that generates ALL the html, without HtmlWebpackPlugin, can operate on a (non-react) html generating function in my src/ directory, but with HtmlWebpackPlugin, I need it to be able to grab the generated-by-webpack index.html (with all of the scripts and stuff webpack has injected into it), and insert into that file (or the string content of that file), the react html, which I can then send off to the client.
-

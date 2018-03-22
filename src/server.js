@@ -25,19 +25,24 @@ if (process.env.NODE_ENV === 'dev') {
 
   app.use(webpackDevMiddleware(compiler, {
     publicPath: clientWebpackConfig.output.publicPath,
-    serverSideRender: true
+    // serverSideRender: true
+    // I dont think I need serverSideRender: true !!
+    // if index is not explicitly set to false, webpack-dev-middleware will respond to requests for the root dir with public/index.html, which we don't want, because we want the ssrMiddlware instead to read this index file, put the react into it, and send the whole string to the client.
+    // Setting index: false makes webpack-dev-middleware ignore requests to the root, which allows the request to make it to app.use(ssrMiddleware())
+    // !! i dont need this
+    // index: false
   }))
   app.use(webpackHotMiddleware(clientBundleCompiler))
   // ?? do I need to app.use(express.static) here ??
-  // This does what app.use(ssrMiddleware()) does in production.
+  // This does what app.use(ssrIndexMiddleware()) does in production.
   app.use(webpackHotServerMiddleware(compiler, { chunkName: 'ssrIndex' }))
 }
 else if (process.env.NODE_ENV === 'prod') {
-  const ssrMiddleware = require('./ssrIndex.bundle.js').default
+  const ssrIndexMiddleware = require('./ssrIndex.bundle.js').default()
 
   app.use(express.static(path.resolve(__dirname, 'public')))
 
-  app.use(ssrMiddleware())
+  app.use(ssrIndexMiddleware)
 }
 else {
   throw new Error('You must specify NODE_ENV = either "prod" or "dev".  Script exiting...')

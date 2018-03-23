@@ -9,6 +9,7 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
+    "//": "!! in the 'build' script below, setting CLI args is against webpack best practices, so fix this !!",
     "build": "NODE_ENV=prod webpack",
     "prod-localtest-start": "NODE_ENV=prod node dist/server.js",
     "prod-localtest-build-start": "npm run build; npm run prod-localtest-start",

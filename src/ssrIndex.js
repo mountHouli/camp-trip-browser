@@ -1,9 +1,12 @@
 // Note:  The entire SSR HTML generation must be handled by the middleware defined in this file
 // because webpack-dev-server-middleware must be able to app.use this whole thing so it can
 // completely handle and respond to requests made to the dev server.
+import React from 'react'
 import ReactDOMServer from 'react-dom/server'
+import { Provider } from 'react-redux'
+import { StaticRouter } from 'react-router'
 
-import Html from './html.jsx'
+import App from './components/App.jsx'
 import createStore from './state/store.js'
 
 export default function ssrIndexMiddlewareCreator () {
@@ -12,9 +15,15 @@ export default function ssrIndexMiddlewareCreator () {
 
     const store = await createStore()
 
-    const indexHtml = ReactDOMServer.renderToString(
-      Html(req.url, store, context)
+    const reactHtml = ReactDOMServer.renderToString(
+      <Provider store={store}>
+        <StaticRouter location={req.url} context={context}>
+          <App/>
+        </StaticRouter>
+      </Provider>
     )
+
+    const indexHtml = ssrIndexHtmlGenerator(reactHtml)
 
     // The when react renders, StaticRouter (in Html.jsx) will modify the context object.
     // If the requested location is a react router redirect, the router will add a
@@ -27,4 +36,17 @@ export default function ssrIndexMiddlewareCreator () {
       res.send(indexHtml)
     }
   }
+}
+
+// !! fix <script src="/whatever" /> relative path to handle both http and https (if it doesn't already--I dont know)
+function ssrIndexHtmlGenerator (reactRootContent) {
+  const html =
+`<head>
+</head>
+<body>
+  <div id="react_root">${reactRootContent}</div>
+  <script src="/clientIndex.bundle.js"></script>
+</body>`
+
+  return html
 }

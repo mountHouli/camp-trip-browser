@@ -19,10 +19,15 @@ See:
 ## To-Do
 
 - Build system
-  - Setup dev envr
-    - switch NODE_ENV from "prod" and "dev" to "production" and "development" because this is what webpack uses.
+  - Code splitting
+    - react-loadable
+      - ????????????? if I output all the bundles into the html, they will all load at pageload anyway, so this doesn't reduce the amount of data I have to load at page load time, so what's the point ????????????
+      - maybe `npm uninstall -save react-loadbale`
     - Errors hidden until dev server killed.  Ex:  `ReferenceError: WHATEVER_COMPONENT_I_USED_BUT_FORGOT_TO_IMPORT is not defined`
+  - Production build makes a request to `/__webpack_hmr`
+  - Setup dev envr
     - Clean up env var setting, especially NODE_ENV
+      - switch NODE_ENV from "prod" and "dev" to "production" and "development" because this is what webpack uses.
       - maybe use webpack "mode" option
       - https://webpack.js.org/configuration/configuration-types/
     - debug
@@ -30,11 +35,12 @@ See:
       - add a entry.context: param so that webpack isn't dependent on cwd
   - Minify
   - Could use code splitting to make `clientIndex.bundle.js` and `ssrIndex.bundle.js` share most of the same code.  Not necessar, however, because code splitting is usually for performance reasons.
-  - move common webpack config (such as copying and cleaning files) from server to client config.
+  - Quit using HtmlWebpackPlugin because
+    - It has a bug so it doesn't delete junk/index.html
+    - I'd rather have a separate npm script to clean that I can run whenever I want, without also building.
   - Consider using `import { syncHistoryWithStore } from 'react-router-redux';`
   - Performance
     - use renderToNodeStream() from react-dom/server instead of renderToString() (see https://blogs.msmvps.com/theproblemsolver/2017/11/26/react-server-side-rendering-with-webpack/)
-  - Production build makes a request to `/__webpack_hmr`
   - Fix <script src="/whatever" /> relative path to handle both http and https (if it doesn't already--I dont know)
 
 ### Low Priority
@@ -43,6 +49,7 @@ See:
   - eslint
     - `.eslintrc.json` React recommended settings (see https://github.com/yannickcr/eslint-plugin-react)
   - Enable dist/ dir cleaning without webpack building.
+  - move common webpack config (such as copying and cleaning files) from server to client config.
 
 ### Done
 

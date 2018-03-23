@@ -83,7 +83,11 @@ const clientConfig = removeEmpty({
     new CleanWebpackPlugin(
       [
         'dist/*.*',
-        'dist/public/*.*'
+        'dist/public/*.*',
+        // This doesn't get cleaned because CleanWebpackPlugin has a bug.
+        // However, the file does get updated with the latest content.
+        // Leave this here just to note what I want to do and make it work if the bug gets fixed.
+        'junk/index.html'
       ],
       {
         root: __dirname,
@@ -102,7 +106,7 @@ const clientConfig = removeEmpty({
     // it in my <HTML/> react component (I have to do this for SSR).
     new HtmlWebpackPlugin({
       template: 'src/index.html.template',
-      // The "filename:" path is relative to "output.path:"
+      // The "filename" path is relative to "output.path"
       filename: '../../junk/index.html'
     })
   ].concat(client.plugins[NODE_ENV]))

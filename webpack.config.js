@@ -112,7 +112,7 @@ const clientConfig = removeEmpty({
   ].concat(client.plugins[NODE_ENV]))
 })
 
-ssrConfig = removeEmpty({
+const ssrConfig = removeEmpty({
   name: 'server',
   // Causes webpack to use normal "require()" rather than the webpack require.
   // We want this because this file is for code that will always run on the server.
@@ -145,7 +145,7 @@ ssrConfig = removeEmpty({
     // Make the webpack resolver look for .jsx files (in addition to defaults),
     // so you can import a .jsx file without specifying the extension
     extensions: ['.js', '.json', '.jsx']
-  },
+  }
 })
 
 module.exports = [ clientConfig, ssrConfig ]

@@ -1,4 +1,5 @@
 *.html
+index.html.template
 dist
 junk
 LICENSE.txt

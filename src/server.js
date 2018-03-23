@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'dev') {
   const clientBundleCompiler = compiler.compilers.find(compiler => compiler.name === 'client')
 
   app.use(webpackDevMiddleware(compiler, {
-    publicPath: clientWebpackConfig.output.publicPath,
+    publicPath: clientWebpackConfig.output.publicPath
     // serverSideRender: true
     // I dont think I need serverSideRender: true !!
     // if index is not explicitly set to false, webpack-dev-middleware will respond to requests for the root dir with public/index.html, which we don't want, because we want the ssrMiddlware instead to read this index file, put the react into it, and send the whole string to the client.

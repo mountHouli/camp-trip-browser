@@ -5,6 +5,7 @@ const webpackNodeExternals = require('webpack-node-externals')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const { removeEmpty } = require('webpack-config-utils')
 
 const { NODE_ENV } = process.env
@@ -30,8 +31,52 @@ const deploymentLevelSpecificConfigs = {
       // almost perfectly preserves the original source files and line numbers.
       dev: 'cheap-module-eval-source-map'
     },
+    module: {
+      rules: {
+        prod: [
+          // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
+          {
+            test: /\.css$/,
+            use: ExtractTextPlugin.extract({
+              fallback: "style-loader",
+              use: [{
+                loader: "css-loader",
+                options: {
+                  modules: true,
+                  localIdentName: '[path][name]__[local]--[hash:base64:5]'
+                }
+              }]
+            })
+          }
+        ],
+        dev: [
+          // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
+          {
+            test: /\.css$/,
+            use: [
+              {
+                loader: 'style-loader',
+              },
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  localIdentName: '[path][name]__[local]--[hash:base64:5]'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
     plugins: {
-      prod: undefined,
+      prod: [
+        // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
+        new ExtractTextPlugin({
+          filename: '[name].bundle.css',
+          allChunks: true
+        })
+      ],
       dev: [
         // We only want to use this for the client bundle, because HMR for the server bundle
         // is handled not by webpack-hot-middleware but by webpack-hot-server-middleware
@@ -72,7 +117,7 @@ const clientConfig = removeEmpty({
         include: [/src/], // !! verify this works like I think it does !! ¿¿ Why is it a regex ??
         loader: 'babel-loader'
       }
-    ]
+    ].concat(client.module.rules[NODE_ENV])
   },
   resolve: {
     // Make the webpack resolver look for .jsx files (in addition to defaults),
@@ -138,6 +183,20 @@ const ssrConfig = removeEmpty({
         include: [/src/], // !! verify this works like I think it does !! ¿¿ Why was it originally the regex [/src/] ??
         exclude: ['src/server.js', 'src/ssrIndex.js'], // !! fix this
         loader: 'babel-loader'
+      },
+      {
+        // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [{
+            loader: "css-loader",
+            options: {
+              modules: true,
+              localIdentName: '[path][name]__[local]--[hash:base64:5]'
+            }
+          }]
+        })
       }
     ]
   },
@@ -145,7 +204,14 @@ const ssrConfig = removeEmpty({
     // Make the webpack resolver look for .jsx files (in addition to defaults),
     // so you can import a .jsx file without specifying the extension
     extensions: ['.js', '.json', '.jsx']
-  }
+  },
+  plugins: [
+    // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
+    new ExtractTextPlugin({
+      filename: '[name].bundle.css',
+      allChunks: true
+    })
+  ]
 })
 
 module.exports = [ clientConfig, ssrConfig ]

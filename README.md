@@ -18,12 +18,16 @@ See:
 
 ## To-Do
 
+- Front end locks up with "TypeError: Cannot read property 'reduce' of undefined" if the api is non-responsive
 - Build system
+  - Consider just building the SSR code with babel instead of webpack 
+    - Was suggested here https://medium.com/@mattvagni/server-side-rendering-with-css-modules-6b02f1238eb1
+    - babel-plugin-css-modules-transform
   - Code splitting
     - react-loadable
       - ????????????? if I output all the bundles into the html, they will all load at pageload anyway, so this doesn't reduce the amount of data I have to load at page load time, so what's the point ????????????
       - maybe `npm uninstall -save react-loadbale`
-    - Errors hidden until dev server killed.  Ex:  `ReferenceError: WHATEVER_COMPONENT_I_USED_BUT_FORGOT_TO_IMPORT is not defined`
+  - Errors hidden until dev server killed.  Ex:  `ReferenceError: WHATEVER_COMPONENT_I_USED_BUT_FORGOT_TO_IMPORT is not defined`
   - Production build makes a request to `/__webpack_hmr`
   - Setup dev envr
     - Clean up env var setting, especially NODE_ENV
@@ -38,10 +42,10 @@ See:
   - Quit using HtmlWebpackPlugin because
     - It has a bug so it doesn't delete junk/index.html
     - I'd rather have a separate npm script to clean that I can run whenever I want, without also building.
-  - Consider using `import { syncHistoryWithStore } from 'react-router-redux';`
-  - Performance
-    - use renderToNodeStream() from react-dom/server instead of renderToString() (see https://blogs.msmvps.com/theproblemsolver/2017/11/26/react-server-side-rendering-with-webpack/)
-  - Fix <script src="/whatever" /> relative path to handle both http and https (if it doesn't already--I dont know)
+- Consider using `import { syncHistoryWithStore } from 'react-router-redux';`
+- Performance
+  - use renderToNodeStream() from react-dom/server instead of renderToString() (see https://blogs.msmvps.com/theproblemsolver/2017/11/26/react-server-side-rendering-with-webpack/)
+- Fix `<script src="/whatever" />` relative path to handle both http and https (if it doesn't already--I dont know)
 
 ### Low Priority
 
@@ -249,3 +253,27 @@ However, I'm doing SSR, and in SSR, an express middleware handles EVERYTHING (ge
 So, how do I use HtmlWebpackPlugin WITH ssr??
 
 The specific problem is, the express middleware that generates ALL the html, without HtmlWebpackPlugin, can operate on a (non-react) html generating function in my src/ directory, but with HtmlWebpackPlugin, I need it to be able to grab the generated-by-webpack index.html (with all of the scripts and stuff webpack has injected into it), and insert into that file (or the string content of that file), the react html, which I can then send off to the client.
+
+### CSS With SSR (re: style-loader and extract-text-webpack-plugin)
+
+Background: css-loader runs first, then style-loader.  css-loader converts the css in .css module files into their webpackified class names, and puts everything in whatever.bundle.js file is specified by your webpack config (for example, your normal entry file).
+
+Then, style-loader, RUNS IN THE BROWSER and goes through your whatever.bundle.js and finds all the css that was put there by css-loader, and applies it to your page.
+
+With SSR:
+
+style-loader chokes on server-side rendering.  I have found only one  way around this that is clean, and it is very specific.
+
+style-loader must not be used with SSR.  Instead extract-text-webpack-plugin must be used for the SSR bundle.  We might as well use extract-text-webpack-plugin for the browser bundle, too.
+
+Note:  css-loader "options.localIdentName" must be the same for both client and ssr/server bundle, otherwise react will complain the .hydrate()d markup doesn't match what it got from the server--and also your CSS won't work (i'm pretty darn sure).
+
+The problem is, extract-text-webpack-plugin breaks hot reloading.
+
+Therefore, the necessary config is:
+In prod, client bundle:  Use extract-text-webpack-plugin, because you might as well have all CSS in the same place.
+In prod, server bundle:  Use extract-text-webpack-plugin, because you have to.
+In dev,  client bundle:  Use style-loader,                so that you can have HMR.
+In dev,  server bundle:  Use extract-text-webpack-plugin, because you have to.
+
+Note:  In this prod config, we will end up with both `clientIndex.bundle.css` and `ssrIndex.bundle.css`.  We only need one of these.  Since both the client entry point and the server entry point, as it pertains to where CSS is included, have the same dependency graph/tree, we could use either `.css` bundle.  `clientIndex.bundle.css` makes more sense to have the browser request, and it is autoamtically put in the `dist/public/` dir, so we have the browser request and use it, and `ssrIndex.bundle.css` goes unused.

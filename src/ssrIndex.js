@@ -48,7 +48,7 @@ function ssrIndexHtmlGenerator (reactRootContent) {
 `<head>
   <link href="https://unpkg.com/basscss@8.0.2/css/basscss.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css?family=Roboto:500,700" rel="stylesheet"/>
-  ${ NODE_ENV === 'prod' ? '<link href="/clientIndex.bundle.css" rel="stylesheet"/>' : '' }
+  ${NODE_ENV === 'prod' ? '<link href="/clientIndex.bundle.css" rel="stylesheet"/>' : ''}
 </head>
 <body>
   <div id="react_root">${reactRootContent}</div>

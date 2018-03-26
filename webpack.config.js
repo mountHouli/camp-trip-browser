@@ -38,9 +38,9 @@ const deploymentLevelSpecificConfigs = {
           {
             test: /\.css$/,
             use: ExtractTextPlugin.extract({
-              fallback: "style-loader",
+              fallback: 'style-loader',
               use: [{
-                loader: "css-loader",
+                loader: 'css-loader',
                 options: {
                   modules: true,
                   localIdentName: '[path][name]__[local]--[hash:base64:5]'
@@ -142,7 +142,7 @@ const clientConfig = removeEmpty({
       }
     ),
     new CopyWebpackPlugin([
-      // The "to:" paths are relative to the "output.path:" directory
+      // The 'to:' paths are relative to the 'output.path:' directory
       {from: 'src/server.js', to: '../server.js'},
       {from: 'src/config.js', to: '../config.js'}
     ]),
@@ -151,7 +151,7 @@ const clientConfig = removeEmpty({
     // it in my <HTML/> react component (I have to do this for SSR).
     new HtmlWebpackPlugin({
       template: 'src/index.html.template',
-      // The "filename" path is relative to "output.path"
+      // The 'filename' path is relative to 'output.path'
       filename: '../../junk/index.html'
     })
   ].concat(client.plugins[NODE_ENV]))
@@ -159,7 +159,7 @@ const clientConfig = removeEmpty({
 
 const ssrConfig = removeEmpty({
   name: 'server',
-  // Causes webpack to use normal "require()" rather than the webpack require.
+  // Causes webpack to use normal 'require()' rather than the webpack require.
   // We want this because this file is for code that will always run on the server.
   target: 'node',
   // Causes webpack to not add to the bundle any packages in node_modules such as express.
@@ -172,7 +172,7 @@ const ssrConfig = removeEmpty({
     filename: '[name].bundle.js',
     path: path.join(__dirname, 'dist'),
     // This makes it so ssrIndex.js's default export, which is a function, can be required and used.
-    // Note:  When using the "commonjs2" option, the webpack "output.library:" member is irrelevant.
+    // Note:  When using the 'commonjs2' option, the webpack 'output.library:' member is irrelevant.
     libraryTarget: 'commonjs2'
   },
   devtool: ssr.devtool[NODE_ENV],
@@ -188,9 +188,9 @@ const ssrConfig = removeEmpty({
         // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
+          fallback: 'style-loader',
           use: [{
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               modules: true,
               localIdentName: '[path][name]__[local]--[hash:base64:5]'

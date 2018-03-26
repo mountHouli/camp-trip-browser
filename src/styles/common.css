@@ -1,0 +1,25 @@
+/*
+Figure out how to put this into a global file, where the classes keep
+their original names, rather than being replaced with localIdentName !!
+*/
+.width_100 {
+  width: 100%;
+}
+
+.h0 { font-size: 3rem }
+
+.white {
+  color: white;
+}
+
+.bg_blue {
+  background-color: rgb(21, 82, 216);
+}
+
+.bg_green {
+  background-color: green;
+}
+
+.header_height {
+  height: 73px
+}

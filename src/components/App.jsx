@@ -3,19 +3,34 @@ import { Route, Redirect, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { hot } from 'react-hot-loader'
 
-// import Home from './Home' // !! fix this
-import TripList from './TripList'
+import Home from './Home' // !! fix this
 import Trip from './Trip'
+import Header from './Header'
+
+// Just need to import global.css once somewhere so its styles end up in the webpack dependency graph.
+// eslint-disable-next-line no-unused-vars
+import globalStyles from '../styles/global.css'
+import { header_height, bg_green, width_100 } from '../styles/common.css'
+// import { side_bars } from '../styles/App.css'
 
 class App extends React.Component {
   render () {
     return (
       <div>
-        <div>This is the app page, and here are some links:</div>
-        <div><Link to={'/trip/1'}>Trip 1</Link></div>
-        <Route path='/' exact component={TripList} />
-        <Route path='/trip' component={Trip} />
-        <Route exact path='/nothing' render={() => (<Redirect to='/trip/1'/>)}/>
+        <Header/>
+        <div className={[header_height, bg_green].join(' ')}>
+          This is behind the header
+        </div> {/* Do this more cleanly !! */}
+        <div>
+          <div>a</div>
+          <div>
+          <Link to={'/trip/1'}>Trip 1</Link>
+          <Route path='/' exact component={Home} />
+          <Route path='/trip' component={Trip} />
+          <Route exact path='/nothing' render={() => (<Redirect to='/trip/1'/>)}/>
+          </div>
+          <div>b</div>
+        </div>
       </div>
     )
   }

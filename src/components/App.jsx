@@ -7,7 +7,7 @@ import Home from './Home' // !! fix this
 import Trip from './Trip'
 import Header from './Header'
 
-// Just need to import global.css once somewhere so its styles end up in the webpack dependency graph.
+// Just need to import global.css once somewhere so its styles get processed by webpack.
 // eslint-disable-next-line no-unused-vars
 import globalStyles from '../styles/global.css'
 import { header_height, bg_green, width_100 } from '../styles/common.css'

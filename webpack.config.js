@@ -10,6 +10,8 @@ const { removeEmpty } = require('webpack-config-utils')
 
 const { NODE_ENV } = process.env
 
+const globalCssFile = path.join(__dirname, 'src/styles/global.css')
+
 const deploymentLevelSpecificConfigs = {
   client: {
     entry: {
@@ -36,7 +38,17 @@ const deploymentLevelSpecificConfigs = {
         prod: [
           // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
           {
+            test: globalCssFile,
+            use: ExtractTextPlugin.extract({
+              fallback: 'style-loader',
+              use: [{
+                loader: 'css-loader'
+              }]
+            })
+          },
+          {
             test: /\.css$/,
+            exclude: globalCssFile,
             use: ExtractTextPlugin.extract({
               fallback: 'style-loader',
               use: [{
@@ -52,7 +64,12 @@ const deploymentLevelSpecificConfigs = {
         dev: [
           // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
           {
+            test: globalCssFile,
+            loader: 'style-loader!css-loader'
+          },
+          {
             test: /\.css$/,
+            exclude: globalCssFile,
             use: [
               {
                 loader: 'style-loader',
@@ -185,8 +202,18 @@ const ssrConfig = removeEmpty({
         loader: 'babel-loader'
       },
       {
+        test: globalCssFile,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [{
+            loader: 'css-loader'
+          }]
+        })
+      },
+      {
         // See README.md for explanation of prod and dev, client and ssr/server style/css -related config.
         test: /\.css$/,
+        exclude: globalCssFile,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [{

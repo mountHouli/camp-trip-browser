@@ -272,9 +272,16 @@ Note:  css-loader "options.localIdentName" must be the same for both client and 
 The problem is, extract-text-webpack-plugin breaks hot reloading.
 
 Therefore, the necessary config is:
-In prod, client bundle:  Use extract-text-webpack-plugin, because you might as well have all CSS in the same place.
-In prod, server bundle:  Use extract-text-webpack-plugin, because you have to.
+In prod, client bundle:  Use extract-text-webpack-plugin, because you might as well have all CSS in the same place, plus it will probably load faster.
+In prod, server bundle:  Use extract-text-webpack-plugin, because you have to, because style-loader chokes on SSR.
 In dev,  client bundle:  Use style-loader,                so that you can have HMR.
-In dev,  server bundle:  Use extract-text-webpack-plugin, because you have to.
+In dev,  server bundle:  Use extract-text-webpack-plugin, because you have to, because style-loader chokes on SSR.
 
 Note:  In this prod config, we will end up with both `clientIndex.bundle.css` and `ssrIndex.bundle.css`.  We only need one of these.  Since both the client entry point and the server entry point, as it pertains to where CSS is included, have the same dependency graph/tree, we could use either `.css` bundle.  `clientIndex.bundle.css` makes more sense to have the browser request, and it is autoamtically put in the `dist/public/` dir, so we have the browser request and use it, and `ssrIndex.bundle.css` goes unused.
+
+One more layer:
+
+I want to use basscss.com-style classes, and I want to manually exdent those glasses into a global stylesheet I create.  This stylesheet needs to NOT have its class names CSS-Modules-style mangled by extract-text-webpack-plugin options `{ modules: true, localIdentName: '[hash_or_whatever][and_stuff]' }`.  However, it still must pass through loaders because...
+1. It needs to get processed by sass-loader and postcss-loader
+2. HMR needs to work while `NODE_ENV = development`.
+That is why it is excluded from the normal `/\.css$/` loader chains of the various configs (client/server, prod/dev), and has its own loader chain.

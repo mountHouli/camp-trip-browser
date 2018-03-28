@@ -257,31 +257,33 @@ The specific problem is, the express middleware that generates ALL the html, wit
 
 ### CSS With SSR (re: style-loader and extract-text-webpack-plugin)
 
-Background: css-loader runs first, then style-loader.  css-loader converts the css in .css module files into their webpackified class names, and puts everything in whatever.bundle.js file is specified by your webpack config (for example, your normal entry file).
+#### Background (how `style-loader` and `css-loader` normally work):
 
-Then, style-loader, RUNS IN THE BROWSER and goes through your whatever.bundle.js and finds all the css that was put there by css-loader, and applies it to your page.
+`css-loader` runs first, then `style-loader`.  `css-loader` converts the css in `.css` module files into their CSS-Module-localIdentName / webpackified class names, and puts everything in whatever.bundle.js file is specified by your webpack config (for example, your normal entry file).
 
-With SSR:
+Then, `style-loader`, RUNS IN THE BROWSER and goes through your whatever.bundle.js and finds all the css that was put there by `css-loader`, and applies it to your page.
 
-style-loader chokes on server-side rendering.  I have found only one  way around this that is clean, and it is very specific.
+#### But with SSR...
 
-style-loader must not be used with SSR.  Instead extract-text-webpack-plugin must be used for the SSR bundle.  We might as well use extract-text-webpack-plugin for the browser bundle, too.
+`style-loader` chokes on server-side rendering.  I have found only one way around this that is clean, and it is very specific.
 
-Note:  css-loader "options.localIdentName" must be the same for both client and ssr/server bundle, otherwise react will complain the .hydrate()d markup doesn't match what it got from the server--and also your CSS won't work (i'm pretty darn sure).
+Specifically, `style-loader` must not be used with SSR.  Instead `extract-text-webpack-plugin` must be used for the SSR bundle.  We might as well use `extract-text-webpack-plugin` for the browser bundle, too.
 
-The problem is, extract-text-webpack-plugin breaks hot reloading.
+Note:  `css-loader`'s `options.localIdentName` must be the same for both client and ssr/server bundle, otherwise react will complain the `.hydrate()`ed markup doesn't match what it got from the server--and also your CSS won't work (I'm pretty darn sure).
+
+The problem is, `extract-text-webpack-plugin` breaks hot reloading.
 
 Therefore, the necessary config is:
-In prod, client bundle:  Use extract-text-webpack-plugin, because you might as well have all CSS in the same place, plus it will probably load faster.
-In prod, server bundle:  Use extract-text-webpack-plugin, because you have to, because style-loader chokes on SSR.
-In dev,  client bundle:  Use style-loader,                so that you can have HMR.
-In dev,  server bundle:  Use extract-text-webpack-plugin, because you have to, because style-loader chokes on SSR.
+In prod, client bundle:  Use `extract-text-webpack-plugin`, because you might as well have all CSS in the same place, plus it will probably load faster.
+In prod, server bundle:  Use `extract-text-webpack-plugin`, because you have to, because `style-loader` chokes on SSR.
+In dev,  client bundle:  Use `style-loader`,                so that you can have HMR.
+In dev,  server bundle:  Use `extract-text-webpack-plugin`, because you have to, because `style-loader` chokes on SSR.
 
-Note:  In this prod config, we will end up with both `clientIndex.bundle.css` and `ssrIndex.bundle.css`.  We only need one of these.  Since both the client entry point and the server entry point, as it pertains to where CSS is included, have the same dependency graph/tree, we could use either `.css` bundle.  `clientIndex.bundle.css` makes more sense to have the browser request, and it is autoamtically put in the `dist/public/` dir, so we have the browser request and use it, and `ssrIndex.bundle.css` goes unused.
+Note:  In this prod config, we will end up with both `clientIndex.bundle.css` and `ssrIndex.bundle.css`.  We only need one of these.  Since both the client entry point and the server entry point, as it pertains to where CSS is included, have the same dependency graph/tree, we could use either of those bundles.  Thought, `clientIndex.bundle.css` makes more sense to use because the browser requests it, and it is automtically put in the `dist/public/` dir.  Consequently, `ssrIndex.bundle.css` goes unused, which is fine.
 
-One more layer:
+#### One more layer:
 
-I want to use basscss.com-style classes, and I want to manually exdent those glasses into a global stylesheet I create.  This stylesheet needs to NOT have its class names CSS-Modules-style mangled by extract-text-webpack-plugin options `{ modules: true, localIdentName: '[hash_or_whatever][and_stuff]' }`.  However, it still must pass through loaders because...
-1. It needs to get processed by sass-loader and postcss-loader
-2. HMR needs to work while `NODE_ENV = development`.
+I want to use `basscss.com`-style classes, and I want to manually extend those classes into a global stylesheet I create (`src/styles/global.scss`).  This stylesheet needs to NOT have its class names `CSS-Modules`-like mangled by `extract-text-webpack-plugin` options `{ modules: true, localIdentName: '[hash_or_whatever][and_stuff]' }`.  However, it still must pass through loaders because...
+1. It needs to get processed by `sass-loader` and `postcss-loader`
+2. HMR for the global style sheet needs to work while `NODE_ENV = development`.
 That is why it is excluded from the normal `/\.css$/` loader chains of the various configs (client/server, prod/dev), and has its own loader chain.

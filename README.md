@@ -255,9 +255,9 @@ So, how do I use HtmlWebpackPlugin WITH ssr??
 
 The specific problem is, the express middleware that generates ALL the html, without HtmlWebpackPlugin, can operate on a (non-react) html generating function in my src/ directory, but with HtmlWebpackPlugin, I need it to be able to grab the generated-by-webpack index.html (with all of the scripts and stuff webpack has injected into it), and insert into that file (or the string content of that file), the react html, which I can then send off to the client.
 
-### CSS With SSR (re: style-loader and extract-text-webpack-plugin)
+### CSS With SSR (Regarding `style-loader` and `extract-text-webpack-plugin`)
 
-#### Background (how `style-loader` and `css-loader` normally work):
+#### Background (How `style-loader` and `css-loader` Normally Work):
 
 `css-loader` runs first, then `style-loader`.  `css-loader` converts the css in `.css` module files into their CSS-Module-localIdentName / webpackified class names, and puts everything in whatever.bundle.js file is specified by your webpack config (for example, your normal entry file).
 
@@ -273,17 +273,19 @@ Note:  `css-loader`'s `options.localIdentName` must be the same for both client 
 
 The problem is, `extract-text-webpack-plugin` breaks hot reloading.
 
-Therefore, the necessary config is:
-In prod, client bundle:  Use `extract-text-webpack-plugin`, because you might as well have all CSS in the same place, plus it will probably load faster.
-In prod, server bundle:  Use `extract-text-webpack-plugin`, because you have to, because `style-loader` chokes on SSR.
-In dev,  client bundle:  Use `style-loader`,                so that you can have HMR.
-In dev,  server bundle:  Use `extract-text-webpack-plugin`, because you have to, because `style-loader` chokes on SSR.
+#### Therefore, the necessary config is:
 
-Note:  In this prod config, we will end up with both `clientIndex.bundle.css` and `ssrIndex.bundle.css`.  We only need one of these.  Since both the client entry point and the server entry point, as it pertains to where CSS is included, have the same dependency graph/tree, we could use either of those bundles.  Thought, `clientIndex.bundle.css` makes more sense to use because the browser requests it, and it is automtically put in the `dist/public/` dir.  Consequently, `ssrIndex.bundle.css` goes unused, which is fine.
+- In prod, client bundle:  Use `extract-text-webpack-plugin`, because you might as well have all CSS in the same place, plus it will probably load faster.
+- In prod, server bundle:  Use `extract-text-webpack-plugin`, because you have to, because `style-loader` chokes on SSR.
+- In dev,  client bundle:  Use `style-loader`,                so that you can have HMR.
+- In dev,  server bundle:  Use `extract-text-webpack-plugin`, because you have to, because `style-loader` chokes on SSR.
 
-#### One more layer:
+Note:  In this prod config, we will end up with both `clientIndex.bundle.css` and `ssrIndex.bundle.css`.  We only need one of these.  Since both the client entry point and the server entry point, as it pertains to where CSS is included, have the same dependency graph/tree, we could have the browser request either of those bundles.  `clientIndex.bundle.css` makes more sense to use because it is, after all, the browser requesting it, and it is automtically put in the `dist/public/` dir by the `clientIndex` entry point.  Consequently, `ssrIndex.bundle.css` goes unused, which is fine.
 
-I want to use `basscss.com`-style classes, and I want to manually extend those classes into a global stylesheet I create (`src/styles/global.scss`).  This stylesheet needs to NOT have its class names `CSS-Modules`-like mangled by `extract-text-webpack-plugin` options `{ modules: true, localIdentName: '[hash_or_whatever][and_stuff]' }`.  However, it still must pass through loaders because...
+#### One More Layer...
+
+I want to use `basscss.com`-like classes, and I want to manually extend those classes into a global stylesheet I create (`src/styles/global.scss`).  This stylesheet needs to NOT have its class names `CSS-Modules`-like mangled by `extract-text-webpack-plugin` options `{ modules: true, localIdentName: '[hash_or_whatever][and_stuff]' }`.  However, it still must pass through loaders because...
 1. It needs to get processed by `sass-loader` and `postcss-loader`
 2. HMR for the global style sheet needs to work while `NODE_ENV = development`.
+
 That is why it is excluded from the normal `/\.css$/` loader chains of the various configs (client/server, prod/dev), and has its own loader chain.

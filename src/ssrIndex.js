@@ -4,8 +4,9 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { Provider } from 'react-redux'
-import { StaticRouter } from 'react-router'
+import { StaticRouter } from 'react-router-dom'
 
+import conf from './config'
 import App from './components/App.jsx'
 import createStore from './state/store.js'
 
@@ -40,20 +41,12 @@ export default function ssrIndexMiddlewareCreator () {
 
 // !! fix <script src="/whatever" /> relative path to handle both http and https (if it doesn't already--I dont know)
 function ssrIndexHtmlGenerator (reactRootContent) {
-  // !! Do this a cleaner way, not using NODE_ENV in this function !!
-  // Also, the ternary operator, when evauating to false, puts a blank line in the html, which isn't bad at all but isn't perfectly clean either. !!
-  const { NODE_ENV } = process.env
-
-  // !! Do this a cleaner / better way.
-  const fontAwesomeUrl = NODE_ENV === 'prod' ? 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' : 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'
-  const bassCssUrl = NODE_ENV === 'prod' ? 'https://unpkg.com/basscss@8.0.2/css/basscss.min.css' : 'https://unpkg.com/basscss@8.0.2/css/basscss.css'
-
   const html =
 `<head>
-  <link rel="stylesheet" href="${fontAwesomeUrl}" />
-  <link rel="stylesheet" href="${bassCssUrl}"/>
+  <link rel="stylesheet" href="${conf.fontAwesomeUrl}" />
+  <link rel="stylesheet" href="${conf.basscssUrl}"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:500,700"/>
-  ${NODE_ENV === 'prod' ? '<link href="/clientIndex.bundle.css" rel="stylesheet"/>' : ''}
+  ${conf.cssBundleMarkup}
 </head>
 <body>
   <div id="react_root">${reactRootContent}</div>

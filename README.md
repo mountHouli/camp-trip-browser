@@ -21,6 +21,7 @@ See:
 - Front end locks up with "TypeError: Cannot read property 'reduce' of undefined" if the api is non-responsive
 - Environment
   - Figure out if I want to get basscss and font-aawesome from a CDN.  Prod vs dev, normal vs minified version.s
+  - github.com/stylelint/stylelint
   - eslint
     - Make it ignore .css files.
   - Consider just building the SSR code with babel instead of webpack 

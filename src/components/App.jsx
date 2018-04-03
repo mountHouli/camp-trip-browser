@@ -10,28 +10,20 @@ import Header from './Header'
 // Just need to import global.css once somewhere so its styles get processed by webpack.
 // eslint-disable-next-line no-unused-vars
 import globalStyles from '../styles/global.css'
-import { header_height, bg_green, width_100 } from '../styles/common.css'
-// import { side_bars } from '../styles/App.css'
 
 class App extends React.Component {
   render () {
     return (
       <div>
         <Header/>
-        <div className={[header_height, bg_green].join(' ')}>
-          This is behind the header
-        </div> {/* Do this more cleanly !! */}
-        <div>
-          <div>a</div>
-          <div>
+        <div className={'header-height'}>This is behind the header</div> {/* Do this more cleanly !! */}
           <Link to={'/trip/1'}>Trip 1</Link>
           <Route path='/' exact component={Home} />
           <Route path='/trip' component={Trip} />
+        <Route path='/trip/2' component={Trip} />
+
           <Route exact path='/nothing' render={() => (<Redirect to='/trip/1'/>)}/>
           </div>
-          <div>b</div>
-        </div>
-      </div>
     )
   }
 }

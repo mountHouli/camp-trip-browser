@@ -1,4 +1,28 @@
+/* Variables 'n' Stuff */
+
+:root {
+  --blue: #4285F4;
+  --white: #f5f7f9;
+}
+
+/* User Agent Style Sheet Overrides */
+
+body {
+  margin: 0px;
+}
+
+/* Everything Else */
+
 body {
   font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
 }
+
+:global .bg-blue { background-color: var(--blue) }
+
+:global .white { color: var(--white) }
+
+:global .width-100 { width: 100%; }
+
+:global .h0 { font-size: 3rem }
+
+:global .header-height { height: 73px }

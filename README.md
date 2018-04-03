@@ -19,8 +19,10 @@ See:
 ## To-Do
 
 - Front end locks up with "TypeError: Cannot read property 'reduce' of undefined" if the api is non-responsive
-- Build system
-  - CSS, setup global file that has its classes not mangled by css-loader's localIdentName.
+- Environment
+  - Figure out if I want to get basscss and font-aawesome from a CDN.  Prod vs dev, normal vs minified version.s
+  - eslint
+    - Make it ignore .css files.
   - Consider just building the SSR code with babel instead of webpack 
     - Was suggested here https://medium.com/@mattvagni/server-side-rendering-with-css-modules-6b02f1238eb1
     - babel-plugin-css-modules-transform
@@ -60,6 +62,7 @@ See:
 
 - In server.js, require() paths are relative to where things sit in the dist directory, so make them work for env=dev as well
 - Build system
+  - CSS, setup global file that has its classes not mangled by css-loader's localIdentName.
   - eslint
     - make it run on files in the root dir
     - no-console rule (make it warn, or maybe remove it altogether)
